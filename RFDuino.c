@@ -139,7 +139,7 @@ static void SetCommandChar(char ch){
 /***************************************************
 Stores the command string
 ***************************************************/
-static void GetCommand(char ch){
+/*static void GetCommand(char ch){
 	//SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
   if(ch != 0){
     if(ch == COMMAND_CHARACTER){
@@ -161,6 +161,48 @@ static void GetCommand(char ch){
       commandchar = 0;
       commandchar_isfree = true;
       cmd_char_counter = 0;
+    }
+
+  }
+
+}*/
+
+static void GetCommand(char ch){
+  if(ch != 0){
+    if(ch == COMMAND_CHARACTER){
+    	cmd_char_counter++;
+	#ifdef SIMPLIFY_COMMAND_STRUCTURE
+        int cmd = VerifyCommand(rx_buffer.data);
+        ExecuteCommand(cmd);
+	#endif
+    }
+
+	rx_buffer.data[rx_buffer.index] = ch;
+	rx_buffer.index++;
+	if(rx_buffer.index >= RX_BUFFER_SIZE-1) rx_buffer.index=0;
+
+
+    if(cmd_char_counter == 2){
+#ifdef DEBUG_RX_BUFFER
+      SaveRXBuffer();
+#endif
+
+      if(rx_buffer.index==2){ //We only received 2 command chars.. this is an error
+    	  rx_buffer.index = 1; //Let's keep one of the command characters
+    	  cmd_char_counter = 1;
+      }
+      else{ //Normal operation
+          rx_buffer.data[rx_buffer.index] = '\0';
+          int cmd = VerifyCommand(rx_buffer.data);
+          ExecuteCommand(cmd);
+
+          rx_buffer.index=0;
+          commandchar = 0;
+          commandchar_isfree = true;
+          cmd_char_counter = 0;
+      }
+
+
     }
 
   }
@@ -216,7 +258,7 @@ void USART0_RX_IRQHandler(void){
 	char ch = USART0->RXDATA;
 
 	SetCommandChar(ch);
-	//if(ch == COMMAND_CHARACTER) SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
+	if(ch == COMMAND_CHARACTER) SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
 	switch(commandchar){
 	  case COMMAND_CHARACTER: GetCommand(ch); break;
 	  case  PARAM_CHAR:        GetParam(ch); break;

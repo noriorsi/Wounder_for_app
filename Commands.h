@@ -15,7 +15,7 @@
 **************************************************/
 
 void InitCMD();
-int VerifyCommand(char* data);
+int VerifyCommand(unsigned char* data);
 void ExecuteCommand(int cmd);
 void SaveParam(char* data, int n);
 void ResetParams();

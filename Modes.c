@@ -296,7 +296,7 @@ void mesurements_for_testing(int n, int p){
 	//send_string("\n");
 	SendEmpty(5);
 	vddVoltage = getVDD(5);
-	send_double(vddVoltage);
+	//send_double(vddVoltage);
 	for(int i=0;i<n;++i){
 
 			f0 = GetADCvalue_Force(0);
@@ -340,7 +340,7 @@ void mesurements_for_testing(int n, int p){
 						f2_minus_offset = 0.000;
 						f3_minus_offset = 0.000;
 						f4_minus_offset = 0.000;
-						}
+					}
 
 /***********************************************************/
 						//send_string ("F0 = ");

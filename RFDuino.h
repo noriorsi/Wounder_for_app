@@ -71,13 +71,18 @@ void InitRFduinoUART();
 
 #define DELAY_AFTER_SENDING 50 //ms
 
-
-
-
 #define BUF_SIZE    64
 #define RX_SIZE     60
 
 #define SEND_TYPE_IDENTIFIERS
+
+//If this is defined the gecko will check for commands that are like the expected command but with little character differences
+#define		CHECK_FOR_SIMILAR_COMMANDS
+
+//If this is defined even one command char is enough to be a valid command
+#ifdef 		CHECK_FOR_SIMILAR_COMMANDS
+	#define 	SIMPLIFY_COMMAND_STRUCTURE
+#endif
 /**************************************************
  *  Structs
 **************************************************/

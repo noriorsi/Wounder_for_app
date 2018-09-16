@@ -78,7 +78,7 @@ state_enum No_Event_Handler(void){
 
 		case MODE2_STATE:{
 
-			FlashLeds(3);
+			//FlashLeds(3);
 
 			if(didElapseGivenSeconds(delay_between_measurement, entered_parametric_timestamp)){ //we need to check this here too else every RFduino IT leads here
 													entered_parametric_timestamp = getTimeStructRTC();

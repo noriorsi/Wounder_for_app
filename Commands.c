@@ -12,7 +12,7 @@ char* CMD[NUMBER_OF_COMMANDS];
 char param_period[MAX_PERIOD_DIGITS_MS+1] = {0};
 int param_period_number = 1000;
 char param_num[MAX_NUM_DIGITS+1] = {0};
-int param_num_number = 31;
+int param_num_number = 5;
 char PARAM[NUMBER_OF_PARAMS];
 unsigned set_params[NUMBER_OF_PARAMS] = {false};
 
@@ -109,6 +109,22 @@ static int paramIndex(char ch){
 }
 
 
+#ifdef CHECK_FOR_SIMILAR_COMMANDS
+static int CheckForSimilarCommands(unsigned char* data){
+	int ret = 0;
+
+	int len = strlen((char*)data);
+
+	for(int i=0; i<len; ++i){
+		if(data[i] == '1') 	ret = CMD_STARTM1; 	//If it contains a '1' it is the startm1 command
+		if(data[i] == '2') 	ret = CMD_STARTM2; 	//If it contains a '2' it is the startm2 command
+		if(data[i] == 'O') 	ret = CMD_STOP;		//If it contains a 'O' it is the stop command
+	}
+
+	return ret;
+}
+#endif
+
 /*********************************************************************************************************************
 -------------------------------------------------- Functions --------------------------------------------------
  *********************************************************************************************************************/
@@ -131,11 +147,23 @@ void InitCMD(){
 /***************************************************
 Verifies the command string
 ***************************************************/
-int VerifyCommand(char* data){
+int VerifyCommand(unsigned char* data){
+  int ret = 0;
+
   for(int i=0; i<NUMBER_OF_COMMANDS; ++i){
-    if(strcmp(data, CMD[i])==0) return i;
+    if(strcmp((char*)data, CMD[i])==0){
+    	ret = i;
+    	break; //Exit for loop
+    }
   }
-  return -1;
+
+#ifdef CHECK_FOR_SIMILAR_COMMANDS
+  if(ret == 0){ //No results so far
+	 ret = CheckForSimilarCommands(data);
+  }
+#endif
+
+  return ret;
 }
 
 
