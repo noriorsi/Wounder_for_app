@@ -12,7 +12,7 @@ char* CMD[NUMBER_OF_COMMANDS];
 char param_period[MAX_PERIOD_DIGITS_MS+1] = {0};
 int param_period_number = 1000;
 char param_num[MAX_NUM_DIGITS+1] = {0};
-int param_num_number = 5;
+int param_num_number = 10;
 char PARAM[NUMBER_OF_PARAMS];
 unsigned set_params[NUMBER_OF_PARAMS] = {false};
 

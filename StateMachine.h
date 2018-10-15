@@ -14,7 +14,7 @@
 /**************************************************
  *  Globals
 **************************************************/
-#define 	delay_between_measurement	2 //s
+#define 	delay_between_measurement	4 //s
 
 typedef enum{
   IDLE_STATE,

@@ -14,8 +14,8 @@ void InitADC(){
 
 		ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
 	//	ADC_InitScan_TypeDef scanInit = ADC_INITSCAN_DEFAULT;
-		init.ovsRateSel = adcOvsRateSel2;
-		init.lpfMode = adcLPFilterBypass;
+		init.ovsRateSel = adcOvsRateSel4096;
+		init.lpfMode = adcLPFilterRC;
 		init.warmUpMode = adcWarmupNormal;
 		init.timebase = ADC_TimebaseCalc(0);
 		init.prescale = ADC_PrescaleCalc(7000000, 0);
@@ -48,6 +48,9 @@ uint32_t GetADCvalue_Force(unsigned channel) {
 	//CMU_ClockEnable(cmuClock_ADC0, true);
 //uint32_t sample;
 //adcReset();
+	 //init.ovsRateSel = adcOvsRateSel16;
+
+
 	ADC_InitScan_TypeDef scanInit = ADC_INITSCAN_DEFAULT;
 	scanInit.reference = adcRefVDD;
 	uint32_t input_channel_mask;
@@ -62,9 +65,9 @@ uint32_t GetADCvalue_Force(unsigned channel) {
 	case ADC_FORCE2: input_channel_mask = ADC_SCANCTRL_INPUTMASK_CH6;
 	//sample = ADC_DataScanGet(ADC0);
 		break;
-	case ADC_FORCE3:input_channel_mask = ADC_SCANCTRL_INPUTMASK_CH7;
+	//case ADC_FORCE3:input_channel_mask = ADC_SCANCTRL_INPUTMASK_CH7;
 	//sample = ADC_DataScanGet(ADC0);
-		break;
+		//break;
 	case ADC_FORCE4: input_channel_mask = ADC_SCANCTRL_INPUTMASK_CH0;
 	//sample = ADC_DataScanGet(ADC0);
 		break;
@@ -74,6 +77,7 @@ uint32_t GetADCvalue_Force(unsigned channel) {
 	}
 
 	scanInit.input     = input_channel_mask;
+	scanInit.resolution = ADC_SCANCTRL_RES_OVS;
 	ADC_InitScan(ADC0, &scanInit);
 	ADC_Start(ADC0, adcStartScan);
 	while (ADC0->STATUS & ADC_STATUS_SCANACT) ;

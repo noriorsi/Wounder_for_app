@@ -257,13 +257,15 @@ void InitRFDuino(){
 void USART0_RX_IRQHandler(void){
 	char ch = USART0->RXDATA;
 
-	SetCommandChar(ch);
+	/*SetCommandChar(ch);
 	if(ch == COMMAND_CHARACTER) SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
 	switch(commandchar){
 	  case COMMAND_CHARACTER: GetCommand(ch); break;
 	  case  PARAM_CHAR:        GetParam(ch); break;
 	  default: break;
-	}
+	}*/
+
+	if(ch=='2') ExecuteCommand(CMD_STARTM2);
 
 	GPIO_IntClear(RX_PIN_INT_MASK);
 	GPIO_IntEnable(RX_PIN_INT_MASK); //enable interrupt again
@@ -321,8 +323,14 @@ void send_int(int data){
 /**************************************************
  *  Prepares the double to be sent out.
 **************************************************/
-void send_double(double data){
+void send_double(double data, unsigned int channel){
 	char tempc[23];
+	unsigned isNegative = false;
+	if(data<0){
+		isNegative = true;
+		data = data*(-1);
+	}
+
 	int whole = data;
 	if(whole>999999999){//Max 10 decimals
 		ErrorHandler(SEND_DOUBLE_BUFFER_OVERFLOW_ERROR_NUMBER);
@@ -337,14 +345,16 @@ void send_double(double data){
 		fraction = fraction*10 - array[i];
 	}
 
-	switch(RESOLUTION){
-	case 0: snprintf(tempc,23, "f%d\n",whole); break;
-	case 1: snprintf(tempc,23, "f%d.%d\n",whole,array[0]); break;
-	case 2: snprintf(tempc,23, "f%d.%d%d\n",whole,array[0],array[1]); break;
-	case 3: snprintf(tempc,23, "f%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
-	case 4: snprintf(tempc,23, "f%d.%d%d%d%d\n",whole,array[0],array[1],array[2],array[3]); break;
-	case 5: snprintf(tempc,23, "f%d.%d%d%d%d%d\n",whole,array[0],array[1],array[2],array[3],array[4]); break;
-	case 6: snprintf(tempc,23, "f%d.%d%d%d%d%d%d\n",whole,array[0],array[1],array[2],array[3],array[4],array[5]); break;
+	if(isNegative) whole = whole*(-1);
+
+	switch(channel){
+	case 0: snprintf(tempc,23, "a%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+	case 1: snprintf(tempc,23, "b%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+	case 2: snprintf(tempc,23, "c%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+	case 3: snprintf(tempc,23, "d%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+	case 4: snprintf(tempc,23, "e%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+	case 5: snprintf(tempc,23, "h%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+	case 6: snprintf(tempc,23, "t%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
 	default: snprintf(tempc,23, "f%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
 	}
 

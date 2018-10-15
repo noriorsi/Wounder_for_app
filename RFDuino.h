@@ -37,7 +37,7 @@ void USART0_TX_IRQHandler(void);
 uint16_t fix_overflow(uint16_t index);
 
 void send_int(int data);
-void send_double(double data);
+void send_double(double data,unsigned int channel);
 void send_string(char* string);
 
 void SendEmpty(unsigned n);
