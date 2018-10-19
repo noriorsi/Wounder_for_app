@@ -1,35 +1,3 @@
-/**************************************************************************//**
- * @file eeprom_emulation.c
- * @brief EEPROM Emulation Demo Application functions
- * @author Silicon Labs
- * @version 1.09
- ******************************************************************************
- * @section License
- * <b>(C) Copyright 2014 Silicon Labs, http://www.silabs.com</b>
- *******************************************************************************
- *
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- *
- * DISCLAIMER OF WARRANTY/LIMITATION OF REMEDIES: Silicon Labs has no
- * obligation to support this Software. Silicon Labs is providing the
- * Software "AS IS", with no express or implied warranties of any kind,
- * including, but not limited to, any implied warranties of merchantability
- * or fitness for any particular purpose or warranties against infringement
- * of any proprietary rights of a third party.
- *
- * Silicon Labs will not be liable for any consequential, incidental, or
- * special damages, or any other relief, or for any claim by any third party,
- * arising from your use of this Software.
- *
- ******************************************************************************/
 
 #include <stdlib.h>
 #include "em_msc.h"
@@ -59,21 +27,7 @@ static int16_t         numberOfPagesAllocated;
  **************************   LOCAL FUNCTIONS   ********************************
  ******************************************************************************/
 
-/***************************************************************************//**
-* @brief
-*   Checks if all the bits in the page are 1's.
-*
-* @param[in]
-*   Pointer to the page that is to be validated.
-*
-* @return
-*   Returns the result of the check.
-*
-* @verbatim
-*   true - All bits in the page are 1's.
-*   false - One or more bits in the page are 0's.
-* @endverbatim
-*******************************************************************************/
+
 static bool EE_validateIfErased(EE_Page_TypeDef *page)
 {
   uint32_t *address = page->startAddress;
@@ -93,23 +47,6 @@ static bool EE_validateIfErased(EE_Page_TypeDef *page)
 }
 
 
-/***************************************************************************//**
- * @brief
- *   Writes the desired data to the specified page.
- *
- * @param[in] page
- *   Pointer to the page to write variable to.
- *
- * @param[in] virtualAddress
- *   The virtual address of the variable to be written.
- *
- * @param[in] writeData
- *   The data to be associated with the given virtual address.
- *
- * @return
- *   Returns whether the write has been a success or not. In normal operation
- *   a failed write indicates that the currently active page is full.
- ******************************************************************************/
 static bool EE_WriteToPage(EE_Page_TypeDef *page, uint16_t virtualAddress, uint16_t writeData)
 {
   /* Start at the second word. The fist one is reserved for status and erase count. */
@@ -145,14 +82,7 @@ static bool EE_WriteToPage(EE_Page_TypeDef *page, uint16_t virtualAddress, uint1
 }
 
 
-/***************************************************************************//**
- * @brief
- *   Erase all pages allocated to the eeprom emulator, and force page 0 to be
- *   the active page.
- *
- * @return
- *   Returns true if the format was successful.
- ******************************************************************************/
+
 bool EE_Format(uint32_t numberOfPages)
 {
   uint32_t eraseCount = 0xFF000001;

@@ -1,4 +1,9 @@
-
+/*
+ * Modes.h
+ *
+ *  Created on: 27 Apr 2017
+ *      Author: Miklós
+ */
 
 #ifndef SRC_MODES_H_
 #define SRC_MODES_H_
@@ -15,6 +20,8 @@
 #include "RTC.h"
 #include "EEPROM.h"
 #include "Flash.h"
+#include <string.h>
+#include <stdio.h>
 /*************************************************
  * Functions
  **************************************************/
@@ -23,18 +30,23 @@ void EnterPowerSaving();
 void EnterEM2(void);
 void MotionSensing();
 void PowerSavingModeNotification(unsigned mode);
-void ContinousMeasurement();
-void SendAndSaveDatas(int n, int period);
+void getVDDdatas();
+void ContinousMeasurement_for5fsr();
+void Temporary_measurements(int n, int period);
+void Measure_multipleFSR (int n, int period);
+void ResetSystem(void);
 //void SendAndSaveDatasPeriod(int n, int period);
 void readADConly();
-void getVDDdatas();
-double hgmm_ebay(uint32_t f);
-uint32_t AVG(int n,int f);
+void Measure(int n, int period);
 double forceNewton(uint32_t f);
 double hgmm (uint32_t f);
 double quickMeas(uint32_t f);
 double forceing(uint32_t f);
 void mesurements_for_testing(int n, int p);
+uint32_t AVG(int n ,int f);
+
+extern double vddVoltage;
+
 /*************************************************
  * Defines
  **************************************************/
@@ -44,6 +56,6 @@ void mesurements_for_testing(int n, int p);
 #define MODE2		2
 #define MODE3		3
 
-#define PARAMETRIC_MEASUREMENT_STORE_SIZE	100
+#define PARAMETRIC_MEASUREMENT_STORE_SIZE	10
 
 #endif /* SRC_MODES_H_ */

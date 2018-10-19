@@ -14,36 +14,34 @@
 
 
 
-
-
-
 int main(void)
 {
+
   /* Chip errata */
   CHIP_Init();
-  InitCMD();
   InitRFDuino();
-  InitGPIO();
-  InitADC();
+  InitCMD();
   InitSysTick();
+  InitGPIO();
   InitSI7021();
+  InitADC();
+
   InitEmulatedEEPROM();
   InitRTC();
-  InitFlash();
- FlashLeds(1);
- FlashLeds(3);
+  //InitFlash();
+  FlashLeds(1);
   InitRFduinoUART();
   EnterPowerSaving();
 
 
-
+  //SetGPIO(MCULED1_PORT,MCULED1_PIN,1);
+  //Delay (1000);
+  //SetGPIO(MCULED1_PORT,MCULED1_PIN,0);
   /* Infinite loop */
   while (1) {
 
 
-	 //SetGPIO(MCULED1_PORT,MCULED1_PIN,1);
 	 //SetGPIO(MCULED3_PORT,MCULED3_PIN,1);
-
 
 	   TimeoutChecker();
 

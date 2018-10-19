@@ -1,4 +1,9 @@
-
+/*
+ * GPIO.c
+ *
+ *  Created on: 20 Feb 2017
+ *      Author: Miklós
+ */
 
 #include "GPIO.h"
 #include "RFDuino.h"
@@ -78,10 +83,11 @@ static int getITpin(){
 
 static void InitADC_GPIO(){
 	SetGPIO_struct(ADC[0], ADC0_PORT, ADC0_PIN, gpioModeInput, 0, false);
-		SetGPIO_struct(ADC[1], ADC1_PORT, ADC1_PIN, gpioModeInput, 0, false);
-		SetGPIO_struct(ADC[2], ADC2_PORT, ADC2_PIN, gpioModeInput, 0, false);
-		//SetGPIO_struct(ADC[3], ADC3_PORT, ADC3_PIN, gpioModeInput, 0, false);// this one should be commented
-		SetGPIO_struct(ADC[4], ADC4_PORT, ADC4_PIN, gpioModeInput, 0, false);
+	SetGPIO_struct(ADC[1], ADC1_PORT, ADC1_PIN, gpioModeInput, 0, false);
+	SetGPIO_struct(ADC[2], ADC2_PORT, ADC2_PIN, gpioModeInput, 0, false);
+	//SetGPIO_struct(ADC[3], ADC3_PORT, ADC3_PIN, gpioModeInput, 0, false);
+	SetGPIO_struct(ADC[4], ADC4_PORT, ADC4_PIN, gpioModeInput, 0, false);
+
 }
 
 //Sets up interrupt for the desired pins
@@ -152,11 +158,12 @@ void GPIOSetup(GPIO_struct gpio){
 void GPIO_Unified_IRQ(void){
 
 	uint32_t mask = 0;
-
+#ifndef LEDS_OFF
 	SetGPIO(MCULED1_PORT, MCULED1_PIN, 1);
+
 	for(int i=0; i<100; ++i); //a small delay only for a flash of a led
 	SetGPIO(MCULED1_PORT, MCULED1_PIN, 0);
-
+#endif
 	switch(getITpin()){
 		case USART_RX_PIN:{
 			event = RFDUINO_GPIO_IT_EVENT;
@@ -177,21 +184,25 @@ void GPIO_Unified_IRQ(void){
 /**************************************************************************//**
  * @brief GPIO Interrupt handler for odd pins.
  *****************************************************************************/
+void GPIO_ODD_IRQHandler(void)
+{
+  GPIO_Unified_IRQ();
+}
+
 void GPIO_EVEN_IRQHandler(void)
 {
   GPIO_Unified_IRQ();
 }
 
-void GPIO_ODD_IRQHandler(void)
-{
-  GPIO_Unified_IRQ();
-}
+
 /*************************************************
  * Returns if the button has been pushed
  **************************************************/
 unsigned StartMode(){
 	return startMode;
 }
+
+
 void FlashLeds(unsigned int n){
 
 #ifdef LEDS_OFF

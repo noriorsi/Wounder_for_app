@@ -21,9 +21,9 @@
 #define I2CSPM_INIT_new                                                   \
   { I2C0,                      /* Use I2C instance 0 */                        \
     I2C_SCL_PORT,                 /* SCL port */                                  \
-    I2C_SCL_PIN,                         /* SCL pin */                                   \
+    I2C_SCL_PIN,                  /* SCL pin */                                   \
     I2C_SDA_PORT,                 /* SDA port */                                  \
-    I2C_SDA_PIN,                         /* SDA pin */                                   \
+    I2C_SDA_PIN,                  /* SDA pin */                                   \
     4,                         /* Location */                                  \
     0,                         /* Use currently configured reference clock */  \
     I2C_FREQ_STANDARD_MAX,     /* Set to standard rate  */                     \
@@ -34,7 +34,6 @@
 
 void InitSI7021();
 void SI7021_Measure(uint32_t *rhData, int32_t *tData);
-//void DisplayHumData();
-//void DisplayTempData();
+
 
 #endif /* SRC_SI7021_H_ */

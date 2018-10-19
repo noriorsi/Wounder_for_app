@@ -1,3 +1,9 @@
+/*
+ * RFDuino.c
+ *
+ *  Created on: 2017. júl. 13.
+ *      Author: szmik_000
+ */
 
 #include "RFDuino.h"
 
@@ -59,6 +65,7 @@ static void InitUART(){
 
 }
 
+
 /**************************************************
  *  Gives starting value for the buffer variable.
 **************************************************/
@@ -118,16 +125,16 @@ static void send(char * string){
       SetGPIO(MCULED3_PORT, MCULED3_PIN, 0);
 }
 
+
 /***************************************************
 Sets the command character
 ***************************************************/
 static void SetCommandChar(char ch){
-	//SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
+
   if(commandchar_isfree){
 
     switch(ch){
       case COMMAND_CHARACTER:   commandchar = COMMAND_CHARACTER;  commandchar_isfree = false;   break;
-      case PARAM_CHAR:          commandchar = PARAM_CHAR;         commandchar_isfree = false;   break;
       default: break;
     }
 
@@ -139,12 +146,9 @@ static void SetCommandChar(char ch){
 /***************************************************
 Stores the command string
 ***************************************************/
-/*static void GetCommand(char ch){
-	//SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
+static void GetCommand(char ch){
   if(ch != 0){
-    if(ch == COMMAND_CHARACTER){
-    	//SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
-    	cmd_char_counter++; }
+    if(ch == COMMAND_CHARACTER) cmd_char_counter++;
 
 	rx_buffer.data[rx_buffer.index] = ch;
 	rx_buffer.index++;
@@ -152,7 +156,6 @@ Stores the command string
 
 
     if(cmd_char_counter == 2){
-    	//SetGPIO(MCULED3_PORT,MCULED3_PIN,1);
       rx_buffer.data[rx_buffer.index] = '\0';
       int cmd = VerifyCommand(rx_buffer.data);
       ExecuteCommand(cmd);
@@ -165,54 +168,11 @@ Stores the command string
 
   }
 
-}*/
-
-static void GetCommand(char ch){
-  if(ch != 0){
-    if(ch == COMMAND_CHARACTER){
-    	cmd_char_counter++;
-	#ifdef SIMPLIFY_COMMAND_STRUCTURE
-        int cmd = VerifyCommand(rx_buffer.data);
-        ExecuteCommand(cmd);
-	#endif
-    }
-
-	rx_buffer.data[rx_buffer.index] = ch;
-	rx_buffer.index++;
-	if(rx_buffer.index >= RX_BUFFER_SIZE-1) rx_buffer.index=0;
-
-
-    if(cmd_char_counter == 2){
-#ifdef DEBUG_RX_BUFFER
-      SaveRXBuffer();
-#endif
-
-      if(rx_buffer.index==2){ //We only received 2 command chars.. this is an error
-    	  rx_buffer.index = 1; //Let's keep one of the command characters
-    	  cmd_char_counter = 1;
-      }
-      else{ //Normal operation
-          rx_buffer.data[rx_buffer.index] = '\0';
-          int cmd = VerifyCommand(rx_buffer.data);
-          ExecuteCommand(cmd);
-
-          rx_buffer.index=0;
-          commandchar = 0;
-          commandchar_isfree = true;
-          cmd_char_counter = 0;
-      }
-
-
-    }
-
-  }
-
 }
-
 /***************************************************
 Stores the given parameter
 ***************************************************/
-static void GetParam(char ch){
+/*static void GetParam(char ch){
   if(ch != 0){
     if(ch == PARAM_CHAR) param_char_counter++;
     rx_buffer.data[rx_buffer.index] = ch;
@@ -235,7 +195,7 @@ static void GetParam(char ch){
 
 }
 
-
+*/
 
 /*********************************************************************************************************************
 -------------------------------------------------- Functions --------------------------------------------------
@@ -257,15 +217,13 @@ void InitRFDuino(){
 void USART0_RX_IRQHandler(void){
 	char ch = USART0->RXDATA;
 
-	/*SetCommandChar(ch);
-	if(ch == COMMAND_CHARACTER) SetGPIO(MCULED2_PORT,MCULED2_PIN,1);
+	SetCommandChar(ch);
+
 	switch(commandchar){
 	  case COMMAND_CHARACTER: GetCommand(ch); break;
-	  case  PARAM_CHAR:        GetParam(ch); break;
-	  default: break;
-	}*/
 
-	if(ch=='2') ExecuteCommand(CMD_STARTM2);
+	  default: break;
+	}
 
 	GPIO_IntClear(RX_PIN_INT_MASK);
 	GPIO_IntEnable(RX_PIN_INT_MASK); //enable interrupt again
@@ -316,21 +274,21 @@ void send_int(int data){
 			ErrorHandler(SEND_INT_BUFFER_OVERFLOW_ERROR_NUMBER);
 			return;
 		}
+#ifdef SEND_TYPE_IDENTIFIERS
 	snprintf(tempc,13, "d%d\n", data);
+#endif
+
+#ifndef SEND_TYPE_IDENTIFIERS
+	snprintf(tempc,13, "%d\n", data);
+#endif
 	send(tempc);
 }
 
 /**************************************************
  *  Prepares the double to be sent out.
 **************************************************/
-void send_double(double data, unsigned int channel){
+void send_double(double data){
 	char tempc[23];
-	unsigned isNegative = false;
-	if(data<0){
-		isNegative = true;
-		data = data*(-1);
-	}
-
 	int whole = data;
 	if(whole>999999999){//Max 10 decimals
 		ErrorHandler(SEND_DOUBLE_BUFFER_OVERFLOW_ERROR_NUMBER);
@@ -344,20 +302,31 @@ void send_double(double data, unsigned int channel){
 		array[i] = fraction*10;
 		fraction = fraction*10 - array[i];
 	}
-
-	if(isNegative) whole = whole*(-1);
-
-	switch(channel){
-	case 0: snprintf(tempc,23, "a%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
-	case 1: snprintf(tempc,23, "b%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
-	case 2: snprintf(tempc,23, "c%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
-	case 3: snprintf(tempc,23, "d%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
-	case 4: snprintf(tempc,23, "e%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
-	case 5: snprintf(tempc,23, "h%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
-	case 6: snprintf(tempc,23, "t%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+#ifdef SEND_TYPE_IDENTIFIERS
+	switch(RESOLUTION){
+	case 0: snprintf(tempc,23, "f%d\n",whole); break;
+	case 1: snprintf(tempc,23, "f%d.%d\n",whole,array[0]); break;
+	case 2: snprintf(tempc,23, "f%d.%d%d\n",whole,array[0],array[1]); break;
+	case 3: snprintf(tempc,23, " %d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+	case 4: snprintf(tempc,23, "f%d.%d%d%d%d\n",whole,array[0],array[1],array[2],array[3]); break;
+	case 5: snprintf(tempc,23, "f%d.%d%d%d%d%d\n",whole,array[0],array[1],array[2],array[3],array[4]); break;
+	case 6: snprintf(tempc,23, "f%d.%d%d%d%d%d%d\n",whole,array[0],array[1],array[2],array[3],array[4],array[5]); break;
 	default: snprintf(tempc,23, "f%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
 	}
+#endif
 
+#ifndef SEND_TYPE_IDENTIFIERS
+		switch(RESOLUTION){
+		case 0: snprintf(tempc,23, "%d\n",whole); break;
+		case 1: snprintf(tempc,23, "%d.%d\n",whole,array[0]); break;
+		case 2: snprintf(tempc,23, "%d.%d%d\n",whole,array[0],array[1]); break;
+		case 3: snprintf(tempc,23, "%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+		case 4: snprintf(tempc,23, "%d.%d%d%d%d\n",whole,array[0],array[1],array[2],array[3]); break;
+		case 5: snprintf(tempc,23, "%d.%d%d%d%d%d\n",whole,array[0],array[1],array[2],array[3],array[4]); break;
+		case 6: snprintf(tempc,23, "%d.%d%d%d%d%d%d\n",whole,array[0],array[1],array[2],array[3],array[4],array[5]); break;
+		default: snprintf(tempc,23, "%d.%d%d%d\n",whole,array[0],array[1],array[2]); break;
+		}
+	#endif
 	send(tempc);
 }
 
@@ -368,7 +337,15 @@ void send_double(double data, unsigned int channel){
 void send_string(char* string){
 	int n = 100;
 		char tempc[n];
-		int ret = snprintf(tempc, n, "s%s", string);
+		int ret = 0;
+
+		#ifdef SEND_TYPE_IDENTIFIERS
+			ret = snprintf(tempc, n, "s%s", string);
+		#endif
+
+		#ifndef SEND_TYPE_IDENTIFIERS
+			ret = snprintf(tempc, n, "%s", string);
+		#endif
 		if(ret < 0){//encoding error
 			ErrorHandler(SEND_STRING_ENCODING_ERROR_NUMBER);
 			return;

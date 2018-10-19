@@ -1,4 +1,5 @@
 
+
 #ifndef SRC_COMMANDS_H_
 #define SRC_COMMANDS_H_
 
@@ -15,24 +16,21 @@
 **************************************************/
 
 void InitCMD();
-int VerifyCommand(unsigned char* data);
+int VerifyCommand(char* data);
 void ExecuteCommand(int cmd);
-void SaveParam(char* data, int n);
-void ResetParams();
+
 
 /**************************************************
  *  Global Defines
 **************************************************/
 
 #define COMMAND_CHARACTER   '$'
-#define PARAM_CHAR          '/' //The parameter character
+
 
 typedef enum{
 	CMD_START,
 	CMD_STOP,
 	CMD_SLEEP,
-	CMD_STARTM1,
-	CMD_SLEEP_DEBUG,
 	CMD_STARTM2,
 	NUMBER_OF_COMMANDS
 }command_enum;
@@ -56,5 +54,5 @@ extern char param_num[MAX_NUM_DIGITS+1];
 extern int param_num_number;
 #define MAX_NUMBER_OF_SAMPLED_DATA		2000
 extern unsigned set_params[NUMBER_OF_PARAMS];
-
+#define PARAM_CHAR          '/'
 #endif /* SRC_COMMANDS_H_ */

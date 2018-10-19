@@ -1,4 +1,9 @@
-
+/*
+ * Error.h
+ *
+ *  Created on: 2017. márc. 31.
+ *      Author: MEMS
+ */
 
 #ifndef SRC_ERROR_H_
 #define SRC_ERROR_H_

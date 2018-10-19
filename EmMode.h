@@ -1,4 +1,9 @@
-
+/*
+ * EnergyModes.h
+ *
+ *  Created on: 2017. ápr. 21.
+ *      Author: MEMS
+ */
 
 #ifndef SRC_ENERGYMODES_H_
 #define SRC_ENERGYMODES_H_

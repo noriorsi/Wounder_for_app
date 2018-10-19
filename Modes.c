@@ -132,49 +132,46 @@ double hgmm_ebay(uint32_t f){
 }
 
 
-/*uint32_t Measure(int n ,int f){
+void Measure(int n, int period){
 
-	//EraseAllPages();
-	//SetGPIO(MCULED2_PORT, MCULED2_PIN, 1);
-	//uint32_t HumData;
-	//int32_t TData;
-	//uint32_t time_ms;
+	EraseAllPages();
+	SetGPIO(MCULED2_PORT, MCULED2_PIN, 1);
+	uint32_t HumData;
+	int32_t TData;
+	uint32_t time_ms;
 
-	//uint32_t start_time = getTime();
-		uint32_t sumforavg = 0;
+	uint32_t start_time = getTime();
+
 		for(int i=0;i<n;++i){
-			ff[i] = GetADCvalue_Force(f);
-			sumforavg += ff[i];
-		}
-		return sumforavg/n;
-			//SI7021_Measure(&HumData, &TData);
-			//humData[i]=HumData;
-			//tData[i]=TData;
-			//time_ms = getTime()-start_time;
+			ff[i] = GetADCvalue_Force(0);
+			SI7021_Measure(&HumData, &TData);
+			humData[i]=HumData;
+			tData[i]=TData;
+			time_ms = getTime()-start_time;
 					//BatteryVoltage = BatteryADCMeasurement();
-				//	WriteToFlash((uint32_t)ff[i]);
+					WriteToFlash((uint32_t)ff[i]);
 					//WriteToFlash((uint32_t)ff[i]);
 					//WriteToFlash((uint32_t)ff[i]);
-					//WriteToFlash((uint32_t)humData[i]);
-					//WriteToFlash((uint32_t)tData[i]);
+					WriteToFlash((uint32_t)humData[i]);
+					WriteToFlash((uint32_t)tData[i]);
 					//WriteToFlash((uint32_t)time_ms);
 					//WriteToFlash((uint32_t) BatteryVoltage);
 					//Delay(1);
 					//Delay(100);
-		//}
+				}
 
-		//	UpdateLastDataInFlash();
+			UpdateLastDataInFlash();
 
-			//RFDuino_GiveIT();
-			//InitRFduinoUART();
-			//SendEmpty(5*n);
+			RFDuino_GiveIT();
+			InitRFduinoUART();
+			SendEmpty(5*n);
 
 			//send_string("------\n");
 
 		//	for(uint32_t i=FLASH_START_ADDRESS; i<(FLASH_START_ADDRESS+(4*n*4)); i+=16){
-		//	for(uint32_t i=FLASH_START_ADDRESS; i<(FLASH_START_ADDRESS+(3*n*4)); i+=12){
-			//	uint32_t* address;
-				//uint32_t readValue;
+			for(uint32_t i=FLASH_START_ADDRESS; i<(FLASH_START_ADDRESS+(3*n*4)); i+=12){
+				uint32_t* address;
+				uint32_t readValue;
 
 				//force
 			/*	address 	= (uint32_t*)(i);
@@ -201,7 +198,7 @@ double hgmm_ebay(uint32_t f){
 				readValue 	= ReadFromFlash(address);
 				send_int((int16_t)readValue);*/
 
-		//	}
+			}
 
 			/*for(int i=0; i<10; ++i){ //Measure battery after sending the n data
 				send_int(BatteryADCMeasurement());
@@ -210,13 +207,11 @@ double hgmm_ebay(uint32_t f){
 			//send_string("Last data address:\n");
 			//send_int(ReadFromFlash((uint32_t*)ADDRESS_OF_LAST_DATA_ADDRESS));
 			//SendDate();
-			//SendEmpty(5*n);
-			//SetGPIO(MCULED2_PORT, MCULED2_PIN, 0);
-			//EnterPowerSaving();
+			SendEmpty(5*n);
+			SetGPIO(MCULED2_PORT, MCULED2_PIN, 0);
+			EnterPowerSaving();
 
-//}
-
-
+}
 
 
 
@@ -323,8 +318,8 @@ void mesurements_for_testing(int n, int p){
 
 	//ADC_Calibration(ADC0,adcRefVDD);
 	SetGPIO(MCULED2_PORT, MCULED2_PIN, 1);
-	uint32_t f0, f1, f2, f3, f4;
-	//int32_t f0_minus_offset, f1_minus_offset, f2_minus_offset, f3_minus_offset, f4_minus_offset  ;
+	int32_t f0, f1, f2, f3, f4;
+	int32_t f0_minus_offset, f1_minus_offset, f2_minus_offset, f3_minus_offset, f4_minus_offset  ;
 	uint32_t HumData;
 	int32_t TData;
 	RFDuino_GiveIT();
@@ -345,33 +340,34 @@ void mesurements_for_testing(int n, int p){
 		f2 = AVG(40 , 2);
 		f4 = AVG(40 , 4);
 
-								//	send_string ("F0 = ");
-									double temp = hgmm(f0);
-									//if(temp>100) temp = 39;
-									send_double(temp,0);
-									//send_string ("F1 = ");
-									temp = hgmm(f1);
-									//if(temp>100) temp = 37;
-									send_double(temp,1);
-									//send_string ("F2 = ");
-									temp = hgmm(f2);
-									//if(temp>100) temp = 35;
-									send_double(temp,2);
-									//send_string ("F3 = ");
-									//if(temp>100) temp = 32;
-									send_double(temp/2,3);
-									//send_string ("F4 = ");
-									temp = hgmm(f4);
-									//if(temp>100) temp = 28;
-									send_double(hgmm(f4),4);
+								send_string ("F0 = ");
+									double temp = ADC_to_Voltage(f0);
+									send_double(temp);
 
-									//send_string("\n");
+									send_string ("F1 = ");
+									temp = ADC_to_Voltage(f1);
+									//if(temp>100) temp = 38;
+									send_double(temp);
+
+									send_string ("F2 = ");
+									temp = ADC_to_Voltage(f2);
+									send_double(temp);
+									//if(temp>100) temp = 35;
+									//send_double(temp);
+									//send_string ("F3 = ");
+									//send_double(20.0);
+									//send_string ("F4 = ");
+									//temp = hgmm(f4);
+									//if(temp>100) temp = 28;
+									//send_double(temp);
+
+									send_string("\n");
 									SI7021_Measure(&HumData, &TData);
-									//send_string("H1 = ");
-									send_double((HumData/1000.0),5);
-									//send_string("T1 = ");
-									send_double((TData/1000.0),6);
-									//send_string("\n");
+									send_string("H1 = ");
+									send_double((HumData/1000.0));
+									send_string("T1 = ");
+									send_double((TData/1000.0));
+									send_string("\n");
 									//Delay(0.1);
 	}
 	SetGPIO(MCULED2_PORT, MCULED2_PIN, 0);

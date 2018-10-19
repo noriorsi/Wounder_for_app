@@ -37,7 +37,7 @@ void USART0_TX_IRQHandler(void);
 uint16_t fix_overflow(uint16_t index);
 
 void send_int(int data);
-void send_double(double data,unsigned int channel);
+void send_double(double data);
 void send_string(char* string);
 
 void SendEmpty(unsigned n);
@@ -69,20 +69,15 @@ void InitRFduinoUART();
 
 #define BAUD 9600
 
-#define DELAY_AFTER_SENDING 50 //ms
+#define DELAY_AFTER_SENDING 10 //ms
+
+
+
 
 #define BUF_SIZE    64
 #define RX_SIZE     60
 
 #define SEND_TYPE_IDENTIFIERS
-
-//If this is defined the gecko will check for commands that are like the expected command but with little character differences
-#define		CHECK_FOR_SIMILAR_COMMANDS
-
-//If this is defined even one command char is enough to be a valid command
-#ifdef 		CHECK_FOR_SIMILAR_COMMANDS
-	#define 	SIMPLIFY_COMMAND_STRUCTURE
-#endif
 /**************************************************
  *  Structs
 **************************************************/
@@ -101,3 +96,4 @@ typedef struct rx_buff{
 }rx_buffer_struct;
 
 #endif /* SRC_RFDUINO_H_ */
+

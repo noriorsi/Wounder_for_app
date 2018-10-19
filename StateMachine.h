@@ -1,4 +1,9 @@
-
+/*
+ * StateMachine.h
+ *
+ *  Created on: 2017. aug. 15.
+ *      Author: szmik_000
+ */
 
 #ifndef SRC_STATEMACHINE_H_
 #define SRC_STATEMACHINE_H_
@@ -11,32 +16,26 @@
 #include "Modes.h"
 #include "Commands.h"
 
+#define 	delay_between_measurement	4 //s
 /**************************************************
  *  Globals
 **************************************************/
-#define 	delay_between_measurement	4 //s
+
 
 typedef enum{
   IDLE_STATE,
-  MODE1_STATE,
   MODE2_STATE,
   WAITING_FOR_COMMAND_STATE,
-  PARAMETRIC_MEASUREMENT_STATE,
   MAX_STATES
 }state_enum;
 
 typedef enum{
   NO_EVENT,
-  START_EVENT,
   STOP_EVENT,
-  STARTM1_EVENT,
   STARTM2_EVENT,
-  SLEEP_DEBUG_EVENT,
   RFDUINO_GPIO_IT_EVENT,
-  ADXL_GPIO_IT_EVENT,
   RTC_IT_EVENT,
   TIMEOUT_EVENT,
-  PARAMS_EVENT,
   MAX_EVENTS
 }event_enum;
 
@@ -52,19 +51,15 @@ extern event_enum event;
 **************************************************/
 
 state_enum No_Event_Handler(void);
-state_enum Start_Event_Handler(void);
 state_enum Stop_Event_Handler(void);
 state_enum Error_Event_Handler(void);
-state_enum StartM1_Event_Handler(void);
 state_enum StartM2_Event_Handler(void);
-state_enum Sleep_Debug_Event_Handler(void);
 state_enum RFduino_GPIO_IT_Event_Handler(void);
-state_enum ADXL_GPIO_IT_Event_Handler(void);
 state_enum RTC_IT_Event_Handler(void);
 
 void TimeoutChecker();
 
 state_enum Timeout_Event_Handler(void);
-state_enum Params_Event_Handler(void);
+
 
 #endif /* SRC_STATEMACHINE_H_ */

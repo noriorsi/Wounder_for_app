@@ -78,3 +78,5 @@ void EraseAllPages(){
 uint32_t ReadFromFlash(uint32_t *address){
 	return *(address);
 }
+
+

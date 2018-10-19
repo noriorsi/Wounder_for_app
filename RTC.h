@@ -29,7 +29,7 @@
 #define		false	0
 
 #define 	RTC_IT_INTERVAL		1000	// ms
-#define LFRCOFREQ 32768
+
 typedef enum{
   SECOND,
   MINUTE,
@@ -57,7 +57,7 @@ typedef struct{
 **************************************************/
 void InitRTC();
 void RTC_IRQHandler();
-#define WAKEUP_US 1000
+
 int getTimeRTC(time_enum t);
 RTC_time_struct getTimeStructRTC();
 void RTC_Setup(CMU_Select_TypeDef osc);
